@@ -1,0 +1,227 @@
+#+title:     System configuration file
+#+author:    Muppet Frogget
+#+email:     john@doe.com
+
+ - .config :: stores all system configuration files
+ - .local :: stores all my scripts
+
+* Environment variables
+
+XDG Base Directory Variables
+#+begin_src shell :tangle .config/env
+#!/bin/sh
+
+export XDG_CONFIG_HOME="$HOME"/.config
+export XDG_DATA_HOME="$HOME"/.local/share
+export XDG_STATE_HOME="$HOME"/.local/state
+export XDG_CACHE_HOME="$HOME"/.cache
+
+# Micro editor
+export EDITOR="micro"
+export MICRO_TRUECOLOR=1
+
+export PF_ASCII="freebsd"
+
+# X11
+export XINITRC="$XDG_CONFIG_HOME"/X11/xinitrc
+export XSERVERRC="$XDG_CONFIG_HOME"/X11/xserverrc
+# export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
+
+export LESSHISTFILE="$XDG_CACHE_HOME"/less/history
+
+# zsh
+export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
+
+# History file for different shells
+case "$(readlink /proc/$$/exe)" in
+    ,*bash)
+		export HISTFILE="$XDG_STATE_HOME"/bash/history
+        ;;
+    ,*zsh)
+		export HISTFILE="$XDG_STATE_HOME"/zsh/history
+        ;;
+esac
+
+# Sets ls colors
+eval $(dircolors "$XDG_CONFIG_HOME"/dircolors)
+
+# Starship
+export STARSHIP_CACHE="$XDG_CACHE_HOME"/starship/cache
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME"/starship/starship.toml
+
+# Golang
+export GOPATH="$XDG_DATA_HOME"/go
+export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
+export PATH="$XDG_DATA_HOME/go/bin:$PATH"
+
+# Rust
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+
+# Python
+export PYTHONSTARTUP="/etc/python/pythonrc"
+
+# Node & Node Version Manager
+export NVM_DIR="$XDG_DATA_HOME"/nvm
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
+export NODE_REPL_HISTORY="$XDG_DATA_HOME"/node_repl_history
+
+# GTK
+export GTK_RC_FILES="$XDG_CONFIG_HOME"/gtk-1.0/gtkrc
+export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+
+export KDEHOME="$XDG_CONFIG_HOME"/kde
+
+export PSQL_HISTORY="$XDG_STATE_HOME"/psql_history
+
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+
+# Java
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
+export ANDROID_HOME="$XDG_DATA_HOME"/android
+export SDKMAN_DIR="$XDG_DATA_HOME"/sdkman
+export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
+export LEIN_HOME="$XDG_DATA_HOME"/lein
+
+export TEXMFVAR="$XDG_CACHE_HOME"/texlive/texmf-var
+
+export WGETRC="$XDG_CONFIG_HOME"/wgetrc
+
+export JULIA_DEPOT_PATH="$XDG_DATA_HOME/julia:$JULIA_DEPOT_PATH"
+
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+
+# Vim
+export GVIMINIT='let $MYGVIMRC="$XDG_CONFIG_HOME/vim/gvimrc" | source $MYGVIMRC'
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
+
+# Virtualenvwrapper settings
+# export WORKON_HOME="$XDG_DATA_HOME"/virtualenvs
+# VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+
+export W3M_DIR="$XDG_DATA_HOME"/w3m
+
+# Emacs
+export PATH="$XDG_CONFIG_HOME/emacs/bin:$PATH"
+
+# Proxychains
+export PROXYCHAINS_CONF_FILE="$XDG_CONFIG_HOME"/proxychains/proxychains.conf
+
+# Ansible
+export ANSIBLE_HOME="$XDG_CONFIG_HOME"/ansible
+export ANSIBLE_CONFIG="$XDG_CONFIG_HOME"/ansible.cfg
+export ANSIBLE_GALAXY_CACHE_DIR="$XDG_CACHE_HOME"/ansible/galaxy_cache
+#+end_src
+
+* Aliases
+
+#+begin_src shell :tangle .config/aliases
+#!/bin/sh
+
+# Commands
+
+# confirm before overwriting something
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
+## ls
+alias l='ls'
+alias ls='ls --color -GF'
+alias ll='ls -lhGF'
+alias la='ls -AGF'
+alias lla='ls -AlGF'
+
+# enable color support of ls, less and man, and also add handy aliases
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
+alias fgrep='fgrep --colour=auto'
+
+#
+# Git Aliases
+# (sorted alphabetically)
+#
+
+alias g='git'
+alias ga='git add'
+alias gau='git add -u'
+alias gcl='git clone'
+alias gcm='git commit'
+alias gitu='git add . && git commit && git push'
+alias gst='git status'
+alias gsts='git status -s'
+alias gstsb='git status -sb'
+
+# some more aliases
+alias m="micro"
+alias df="df -h" # human-readable sizes
+alias free="free -m" # show sizes in MB
+alias np="nano -w PKGBUILD"
+# alias more=less
+
+alias ip="ip -color=auto"
+alias diff="diff --color=auto"
+
+# programs
+alias startx="startx $HOME/.config/X11/xinitrc"
+alias yarn="yarn --use-yarnrc $HOME/.config/yarn/config"
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+alias vim="vim -u ${XDG_CONFIG_HOME:-$HOME/.config}/vim/vimrc"
+alias code="vscodium"
+
+alias conky="conky --config=$XDG_CONFIG_HOME/conky/conkyrc"
+
+alias stow="stow -v --dotfiles"
+
+# Doom Emacs
+alias emacs="emacsclient -c -a 'micro'"
+alias doomrc="$EDITOR $XDG_CONFIG_HOME/doom/config.el"
+
+# quick config
+alias systemrc="$EDITOR $HOME/.dotfiles/system/.config/README.org"
+
+alias bashrc="$EDITOR $HOME/.bashrc"
+alias zshrc="$EDITOR $XDG_CONFIG_HOME/zsh/.zshrc"
+alias alacrittyrc="$EDITOR $HOME/.dotfiles/alacritty/README.org"
+
+alias tmuxrc="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"
+alias dots="cd $HOME/.dotfiles"
+
+# merge new settings
+alias merge="xrdb -merge ~/.Xresources"
+alias reload="source $XDG_CONFIG_HOME/env && \
+              source $XDG_CONFIG_HOME/aliases && \
+              source $XDG_CONFIG_HOME/profile && \
+              printf 'config reloaded\n'"
+
+# alias merge_pdf="convert -density 300x300 -quality 100"
+
+alias rsync="rsync -vhP"
+
+# package manager aliases similar to OpenBSD
+alias pkg_add="doas pacman -S"
+alias pkg_delete="doas pacman -Rsc"
+alias pkg_search="doas pacman -Ss"
+alias sysupgrade="doas pacman -Syu"
+#+end_src
+
+* Profile
+
+#+begin_src shell :tangle .config/profile
+#!/bin/sh
+
+#pfetch
+
+# Load Starship
+case "$(readlink /proc/$$/exe)" in
+    ,*bash)
+        eval "$(starship init bash)"
+        ;;
+    ,*zsh)
+        #export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship-right-prompt.toml"
+        eval "$(starship init zsh)"
+        ;;
+esac
+#+end_src
