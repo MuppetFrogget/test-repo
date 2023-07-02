@@ -2,8 +2,10 @@
 #+author:    Muppet Frogget
 #+email:     john@doe.com
 
- - .config :: stores all system configuration files
- - .local :: stores all my scripts
+* Table of Contents :toc:
+- [[#environment-variables][Environment variables]]
+- [[#aliases][Aliases]]
+- [[#profile][Profile]]
 
 * Environment variables
 
